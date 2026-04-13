@@ -48,15 +48,15 @@ public class CustomerController {
         Address address = customerService.getAddress(dto.addressId());
         Customer customer = customerMapper.toEntity(dto, address);
 
-        Customer saved = customerService.save(customer);
+        CustomerResponseDto saved = customerService.save(customer);
 
-        CustomerResponseDto responseDto = customerMapper.toResponseDto(saved);
+        //CustomerResponseDto responseDto = customerMapper.toResponseDto(saved);
 
-        URI location = URI.create("/api/v1/customers/" + saved.getId());
+        URI location = URI.create("/api/v1/customers/" + saved.id());
 
         return ResponseEntity
                 .created(location)
-                .body(responseDto);
+                .body(saved);
     }
 
     @PutMapping("/{id}")
@@ -68,9 +68,9 @@ public class CustomerController {
 
         customerMapper.updateCustomer(dto, existing, address);
 
-        Customer saved = customerService.save(existing);
+        CustomerResponseDto response = customerService.save(existing);
 
-        return ResponseEntity.ok(customerMapper.toResponseDto(saved));
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

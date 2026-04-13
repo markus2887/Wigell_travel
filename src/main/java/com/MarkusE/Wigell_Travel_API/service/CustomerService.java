@@ -12,6 +12,7 @@ import com.MarkusE.Wigell_Travel_API.repo.CustomerRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class CustomerService {
         this.customerMapper = customerMapper;
     }
 
+    @Transactional(readOnly = true)
     public List<CustomerResponseDto> findAll() {
         List<Customer> customers = customerRepo.findAll();
 
@@ -40,18 +42,23 @@ public class CustomerService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public Customer findById(Long id) {
         return customerRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Member not found with id " + id));
     }
 
-    public Customer save(Customer customer) {
+    @Transactional
+    public CustomerResponseDto save(Customer customer) {
 
         log.info("Admin created customer {}", customer.getUserName());
 
-        return customerRepo.save(customer);
+        customerRepo.save(customer);
+
+        return customerMapper.toResponseDto(customer);
     }
 
+    @Transactional
     public void delete(Long id) {
         Customer existing = findById(id);
         customerRepo.delete(existing);
@@ -65,11 +72,13 @@ public class CustomerService {
 
     //Adressmetoder
 
+    @Transactional(readOnly = true)
     public Address getAddress(Long id) {
         return addressRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Address not found with id " + id));
     }
 
+    @Transactional
     public AddressResponseDto saveAddress(Long customerId, AddressDto dto) {
 
         Customer customer = customerRepo.findById(customerId)
@@ -91,6 +100,7 @@ public class CustomerService {
         return addressMapper.toDto(address);
     }
 
+    @Transactional
     public void removeAddressFromCustomer(Long customerId, Long addressId) {
 
         Customer customer = customerRepo.findById(customerId)

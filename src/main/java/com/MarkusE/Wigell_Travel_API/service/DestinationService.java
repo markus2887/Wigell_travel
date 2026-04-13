@@ -11,6 +11,7 @@ import com.MarkusE.Wigell_Travel_API.repo.DestinationRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,10 +32,12 @@ public class DestinationService {
         this.currencyService = currencyService;
     }
 
+    @Transactional(readOnly = true)
     public List<Destination> findAll() {
         return destinationRepo.findAll();
     }
 
+    @Transactional
     public Destination create(CreateDestinationDto dto) {
 
         Destination destination = destinationMapper.toEntity(dto);
@@ -51,6 +54,7 @@ public class DestinationService {
         return destinationMapper.toDto(d, pln);
     }
 
+    @Transactional
     public DestinationResponseDto update(Long id, CreateDestinationDto dto) {
 
         Destination existing = destinationRepo.findById(id)
@@ -68,6 +72,7 @@ public class DestinationService {
         return toDto(saved);
     }
 
+    @Transactional
     public void delete(Long id) {
 
         Destination destination = destinationRepo.findById(id)

@@ -13,6 +13,7 @@ import com.MarkusE.Wigell_Travel_API.repo.DestinationRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -36,6 +37,7 @@ public class BookingService {
         this.currencyService = currencyService;
     }
 
+    @Transactional(readOnly = true)
     public List<BookingResponseDto> getBookingsByCustomer(Long customerId) {
 
         List<Booking> bookings = bookingRepository.findByCustomerId(customerId);
@@ -45,6 +47,7 @@ public class BookingService {
                 .toList();
     }
 
+    @Transactional
     public BookingResponseDto createBooking(CreateBookingDto dto) {
 
         Customer customer = customerRepository.findById(dto.customerId())
@@ -69,6 +72,7 @@ public class BookingService {
         return bookingMapper.toDto(saved);
     }
 
+    @Transactional
     public BookingResponseDto updateBooking(Long bookingId, UpdateBookingDto dto) {
 
         Booking booking = bookingRepository.findById(bookingId)
